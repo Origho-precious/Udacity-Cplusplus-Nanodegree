@@ -35,7 +35,7 @@ vector<vector<State>> ReadBoardFile(string path) {
       board.push_back(row);
     }
   }
-  return board;
+  return board; // The grid.
 }
 
 bool Compare(const vector<int> a, const vector<int> b) {
@@ -57,6 +57,16 @@ int Heuristic(int x1, int y1, int x2, int y2) {
   return abs(x2 - x1) + abs(y2 - y1);
 }
 
+bool CheckValidCell(int x, int y, vector<vector<State>> &grid){
+  if(grid.size() >= (x + 1) && grid[x].size() >= y){
+    if(grid[x][y] == State::kEmpty){
+      return true;
+    }
+  }
+  
+  return false;
+}
+
 // AddToOpen function here.
 void AddToOpen(int x, int y, int g, int h, vector<vector<int>> &openNodes, vector<vector<State>> &grid){
   vector<int> currentNode = {x, y, g, h};
@@ -66,7 +76,7 @@ void AddToOpen(int x, int y, int g, int h, vector<vector<int>> &openNodes, vecto
 }
 
 // Search function stub here.
-vector<vector<State>> Search(vector<vector<State>> board, int init[2], int goal[2]){
+vector<vector<State>> Search(vector<vector<State>> grid, int init[2], int goal[2]){
   // Create the vector of open nodes.
   vector<vector<int>> open{};
   // Initialize the starting node.
@@ -77,7 +87,7 @@ vector<vector<State>> Search(vector<vector<State>> board, int init[2], int goal[
   int h = Heuristic(x, y, goal[0], goal[1]);
   
   // Add the starting node to the open vector.
-  AddToOpen(x, y, g, h, open, board);
+  AddToOpen(x, y, g, h, open, grid);
 
   // while open vector is non empty {
   while (open.size() > 0){
@@ -90,11 +100,11 @@ vector<vector<State>> Search(vector<vector<State>> board, int init[2], int goal[
     // and set grid[x][y] to kPath.
     x = currentNode[0];
     y = currentNode[1];
-    board[x][y] = State::kPath;
+    grid[x][y] = State::kPath;
 
     // Check if you've reached the goal. If so, return grid.
     if(currentNode[0] == goal[0] && currentNode[1] == goal[1]){
-      return board;
+      return grid;
     }
 
     // If we're not done, expand search to current node's neighbors. This step will be completed in a later quiz.
@@ -130,9 +140,9 @@ void PrintBoard(const vector<vector<State>> board) {
 int main() {
   int init[2] = {0, 0};
   int goal[2] = {4, 5};
-  auto board = ReadBoardFile("board.txt");
+  auto grid = ReadBoardFile("board.txt");
 
-  vector<vector<State>> solution = Search(board, init, goal);
+  vector<vector<State>> solution = Search(grid, init, goal);
 
   PrintBoard(solution);
 
@@ -141,4 +151,5 @@ int main() {
   TestAddToOpen();
   TestCompare();
   TestSearch();
+  TestCheckValidCell();
 }
